@@ -13,13 +13,15 @@ Kimai2 implementation on AWS EKS:
 **Setup AWS**
 
  - Create an IAM Role in AWS to allow access to EKS cluster
- - Create key-pair in IAM using below command
+ - Create key-pair in IAM using command: 
     ```aws ec2 create-key-pair --region us-west-2 --key-name myKeyPair```
  - Create EKS cluster using eksctl:
-    ```eksctl create cluster \
+    ```
+        eksctl create cluster \
         --name my-cluster \
         --region us-west-2 \
         --with-oidc \
         --ssh-access \
         --ssh-public-key <your-key> \
-        --managed```
+        --managed
+        ```
