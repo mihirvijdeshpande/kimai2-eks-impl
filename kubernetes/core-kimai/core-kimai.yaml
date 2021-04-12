@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-kimai
+  namespace: kimai
+  labels:
+    app: kimai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kimai
+  template:
+    metadata:
+      labels:
+        app: kimai
+    spec:
+      volumes:
+      - name: kimai-var
+        persistentVolumeClaim:
+          claimName: core-kimai-var
+      containers:
+      - name: kimai
+        image: kimai/kimai2:apache-debian-master-prod
+        ports:
+        - containerPort: 8001
+          name: kimai
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /opt/kimai/var
+          name: kimai
+      - env:
+        - name: ADMINMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: kimai-configmap
+              value: ADMINMAIL
+        - name: TRUSTED_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              name: kimai-configmap
+              value: TRUSTED_HOSTS
+        - name: ADMINPASS
+          valueFrom:
+            secretKeyRef:
+              name: kimai-secret
+              value: ADMINPASS
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: kimai-secret
+              value: DATABASE_URL
+        - name: APP_ENV
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kimai-service
+  namespace: kimai
+spec:
+  selector:
+    app: kimai
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001

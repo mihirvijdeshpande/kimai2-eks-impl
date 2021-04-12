@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: additional-mysql
+  name: additional-mysql
+  namespace: kimai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: additional-mysql
+  template:
+    metadata:
+      labels:
+        name: additional-mysql
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              value: MYSQL_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              value: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              value: MYSQL_PASSWORD
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              value: MYSQL_ROOT_PASSWORD
+        image: mysql:5.7
+        name: additional-mysql
+        ports:
+        - containerPort: 3306
+          name: mysql
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-data
+      volumes:
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: additional-mysql-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: additional-mysql
+  name: additional-mysql
+  namespace: kimai
+spec:
+  ports:
+  - name: mysql
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+  selector:
+    app: additional-mysql
+  type: ClusterIP

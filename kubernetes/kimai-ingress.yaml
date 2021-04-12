@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: core-kimai
+  namespace: kimai
+spec:
+  rules:
+  - host: kimai.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: core-kimai
+            port: 8001
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - kimai.local
+    secretName: add-you-own-here

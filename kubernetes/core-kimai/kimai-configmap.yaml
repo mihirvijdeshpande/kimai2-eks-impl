@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kimai-configmap
+data:
+  ADMINMAIL: admin@kimai.local
+  TRUSTED_HOSTS: localhost,kimai.local

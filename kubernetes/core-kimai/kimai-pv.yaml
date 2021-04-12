@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kimai-pv
+  namespace: kimai
+spec:
+  volumeMode: Filesystem
+  storageClass: standard
+  hostPath:
+    path: /tmp/hostpath-provisioner/default/core-kimai-var
+    type: ""
+  capacity: 4Gi
+  accessModes:
+    -ReadWRiteOnce
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: core-kimai-var
+  namespace: kimai
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 4Gi
+  storageClassName: standard
+  volumeMode: Filesystem
+  volumeName: kimai-pv
