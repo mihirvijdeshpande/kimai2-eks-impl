@@ -79,7 +79,7 @@
     - create persistent volume and persistent volume claim: `kubectl apply -f ./pv/`
     - deploy mysql DB: `kubectl apply -f ./depls/mysql.yaml`
     - deploy kimai application: `kubectl apply -f ./depls/core-kimai.yaml`
-    - create ingress: `kubectl appply -f ingress.yaml`
+    - create ingress: `kubectl appply -f kimai-ingress.yaml`
     - verify installation:
         ```
         kubectl get all
