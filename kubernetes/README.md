@@ -22,7 +22,6 @@
 **Install and Setup the following tools Locally**
  - [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html)
  - [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html)
- - [helm](https://helm.sh/docs/intro/install/)
  - [docker](https://docs.docker.com/engine/install/)
  - [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html)
 
@@ -68,15 +67,27 @@
  - Configure kubectl using command: `aws eks --region <region-code> update-kubeconfig --name <cluster_name>`
  - Test Configurations : `kubectl get svc`
 
-## Install the Helm Chart for kimai2
+## Deploy using kubectl
 
- - Add helm repository: `helm repo add kimai2tet https://gresci.github.io/kimai2-helmchart/`
- - Install Helm chart for kimai2 on EKS cluster: `helm install my-kimai-helmchart kimai2tet/kimai-helmchart --version 0.1.0`
-
-**Helm Values used in the deployed chart**
-
-The values deployed in the chart are default taken from the values.yaml file in the [official repository](https://github.com/tobybatch/kimai2/tree/main/docs/helm) for kimai2 helm chart.
-To change these values, we can clone the code, change values as needed and then install the helm chart on EKS cluster
+ - pull code from current repo and cd into `kubernetes` directory:
+    ```
+    git clone https://github.com/mihirvijdeshpande/kimai2-eks-impl.git
+    cd kimai2-eks-impl.git/kubernetes
+    ```
+ - run following commands one-by-one, in given order:
+    - deploy secrets and configmap: `kubectl apply -f ./vars/`
+    - create persistent volume and persistent volume claim: `kubectl apply -f ./pv/`
+    - deploy mysql DB: `kubectl apply -f ./depls/mysql.yaml`
+    - deploy kimai application: `kubectl apply -f ./depls/core-kimai.yaml`
+    - create ingress: `kubectl appply -f ingress.yaml`
+    - verify installation:
+        ```
+        kubectl get all
+        kubectl get configmap
+        kubectl get ingress
+        kubectl get pv
+        kubectl get pvc
+        ```
 
 ## Expected Results
 
@@ -85,12 +96,12 @@ The deployment consists of following Kubernetes components:
  - 2 Deployments:
     - kimai deployment contains 1 replicaset managing kimai application pods
     - mysql deplyoment contains 1 replicaset managing mysql application pods
-    - Both Deployments attach a Persistant Volume to the Pods to store non-ephemeral data
+    - Both Deployments attach a Persistent Volume to the Pods to store non-ephemeral data
  - 2 Services each for Kimai app and MySQL
  - 1 Ingress to route traffic to Kimai application.
  - 1 Secret
 
-![Kimai Setup](/assets/images/kimai-all.png)
+![Kimai Setup](/assets/images/kimai.png)
 
 ## Pre-applied settings
 
