@@ -74,6 +74,9 @@
     git clone https://github.com/mihirvijdeshpande/kimai2-eks-impl.git
     cd kimai2-eks-impl.git/kubernetes
     ```
+ - create directories under `/tmp/hostpath-provisioner/default/` for mounting as volumes. These will be used by pods to get non-ephemeral data like DB and vars
+   - mysql: `/tmp/hostpath-provisioner/default/additional-mysql-data`
+   - kimai: `/tmp/hostpath-provisioner/default/kimai/vars`
  - run following commands one-by-one, in given order:
     - deploy secrets and configmap: `kubectl apply -f ./vars/`
     - create persistent volume and persistent volume claim: `kubectl apply -f ./pv/`
